@@ -123,7 +123,7 @@ const HomePage = () => {
               users.find((user) => user.id === parseInt(e.target.value))!
             )
           }
-          className="form-select"
+          className="form-select w-25"
           defaultValue=""
         >
           <option value="" disabled>
