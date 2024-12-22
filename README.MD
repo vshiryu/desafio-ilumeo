@@ -9,7 +9,7 @@
 1. Clone o repositório para sua máquina local:
    ```bash
    git clone <URL_DO_REPOSITORIO>
-   cd <NOME_DO_REPOSITORIO>
+   cd desafio-ilumeo
    ```
 
 2. Suba os serviços usando o comando:
