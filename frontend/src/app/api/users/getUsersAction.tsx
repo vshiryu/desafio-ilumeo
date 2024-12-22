@@ -3,7 +3,7 @@
 import axios from "axios";
 
 export async function getUsersAction() {
-  const apiHost = process.env.API_HOST || "localhost:3001";
+  const apiHost = process.env.NEXT_PUBLIC_API_HOST;
 
   try {
     const response = await axios.get(`${apiHost}/users`);

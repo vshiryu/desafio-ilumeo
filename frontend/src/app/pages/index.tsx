@@ -116,7 +116,7 @@ const HomePage = () => {
       </div>
 
       <div className="my-4">
-        <h3>Usuários cadastrados:</h3>
+        <h3>Usuários:</h3>
         <select
           onChange={(e) => 
             handleSelectUser(
@@ -138,7 +138,7 @@ const HomePage = () => {
 
         {selectedUser && (
           <div className="mt-4">
-            <h4>Informações do Usuário Selecionado:</h4>
+            <h4>Informações do Usuário:</h4>
             <p>
               <strong>Nome:</strong> {selectedUser.name}
             </p>
