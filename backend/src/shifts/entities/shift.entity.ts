@@ -18,7 +18,7 @@ export class Shift {
   @Column({ default: 'regular' })
   type: string;
 
-  @ManyToOne(() => User, (user) => user.shifts)
+  @ManyToOne(() => User, (user) => user.shifts, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
 }
