@@ -9,13 +9,16 @@ interface UserData {
 }
 
 export async function createUserAction(data: UserData) {
-    const apiHost = process.env.API_HOST || "http://localhost:3001";
+  const apiHost = process.env.NEXT_PUBLIC_API_HOST;
   
-    try {
-      const response = await axios.post(`${apiHost}/users`, data);
-      return response.data;
-    } catch (error: any) {
-        throw new Error(error.response?.data?.message || "Erro ao criar usuário");
+  try {
+    const response = await axios.post(`${apiHost}/users`, data);
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response?.data?.message || "Erro ao criar usuário");
     }
+    
+    throw new Error("Erro ao criar usuário");
   }
-  
+}

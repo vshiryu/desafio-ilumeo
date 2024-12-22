@@ -7,11 +7,21 @@ import { endShiftAction } from "../api/shifts/endShiftAction";
 import { getUserShiftsAction } from "../api/shifts/getUserShiftsAction";
 import Modal from "../components/createUserModal";
 import UserShifts from "../components/UserShifts";
+import axios from "axios";
+
+interface Shift {
+  id: number;
+  userId: number;
+  startTime: string;
+  endTime: string | null;
+  totalHours: number | null;
+  type?: string;
+}
 
 const HomePage = () => {
   const [users, setUsers] = useState<{ id: number; name: string; email: string }[]>([]);
   const [selectedUser, setSelectedUser] = useState<{ id: number; name: string; email: string } | null>(null);
-  const [userShifts, setUserShifts] = useState<any[]>([]);
+  const [userShifts, setUserShifts] = useState<Shift[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingShift, setLoadingShift] = useState(false);
   const [shiftMessage, setShiftMessage] = useState<string>("");
@@ -46,7 +56,7 @@ const HomePage = () => {
     setLoadingShift(true);
 
     try {
-      const ongoingShift = userShifts.some((shift: any) => !shift.endTime);
+      const ongoingShift = userShifts.some((shift: Shift) => !shift.endTime);
 
       if (ongoingShift) {
         await endShiftAction(selectedUser.id);
@@ -58,13 +68,17 @@ const HomePage = () => {
 
       const updatedShifts = await getUserShiftsAction(selectedUser.id);
       setUserShifts(updatedShifts);
-    } catch (error: any) {
-
-      if (error.message && error.message === "User already has an ongoing shift") {
-        setShiftMessage("Usuário já tem um turno iniciado");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response) {
+        if (error.response?.data?.message === "User already has an ongoing shift") {
+          setShiftMessage("Usuário já tem um turno iniciado");
+        } else {
+          setShiftMessage("Erro ao iniciar ou finalizar o turno.");
+        }
       } else {
         setShiftMessage("Erro ao iniciar ou finalizar o turno.");
       }
+      
       console.error("Erro ao iniciar ou finalizar o turno:", error);
     } finally {
       setLoadingShift(false);
@@ -102,7 +116,7 @@ const HomePage = () => {
       </div>
 
       <div className="my-4">
-        <h3>Usuários cadastrados:</h3>
+        <h3>Usuários:</h3>
         <select
           onChange={(e) => 
             handleSelectUser(
@@ -124,7 +138,7 @@ const HomePage = () => {
 
         {selectedUser && (
           <div className="mt-4">
-            <h4>Informações do Usuário Selecionado:</h4>
+            <h4>Informações do Usuário:</h4>
             <p>
               <strong>Nome:</strong> {selectedUser.name}
             </p>
@@ -145,7 +159,7 @@ const HomePage = () => {
           className="btn btn-success btn-md mt-3"
           disabled={!selectedUser || loadingShift}
         >
-          {loadingShift ? "Processando..." : userShifts.some((shift: any) => !shift.endTime) ? "Finalizar Turno" : "Iniciar Turno"}
+          {loadingShift ? "Processando..." : userShifts.some((shift: Shift) => !shift.endTime) ? "Finalizar Turno" : "Iniciar Turno"}
         </button>
 
         {userShifts.length > 0 && (

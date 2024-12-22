@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const endShiftAction = async (userId: number) => {
-  const apiHost = process.env.API_HOST || "http://localhost:3001";
+  const apiHost = process.env.NEXT_PUBLIC_API_HOST;
 
   try {
     const response = await axios.patch(`${apiHost}/shifts/end-shift/${userId}`);
