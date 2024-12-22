@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ShiftsService } from './shifts.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Shift } from './entities/shift.entity';
+import { User } from '../users/entities/user.entity'; 
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 const mockShiftRepository = {
@@ -11,9 +12,16 @@ const mockShiftRepository = {
   find: jest.fn(),
 };
 
+const mockUserRepository = {
+  findOne: jest.fn(),
+  create: jest.fn(),
+  save: jest.fn(),
+};
+
 describe('ShiftsService', () => {
   let service: ShiftsService;
-  let repository: any;
+  let shiftRepository: any;
+  let userRepository: any;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -23,41 +31,40 @@ describe('ShiftsService', () => {
           provide: getRepositoryToken(Shift),
           useValue: mockShiftRepository,
         },
+        {
+          provide: getRepositoryToken(User),
+          useValue: mockUserRepository,
+        },
       ],
     }).compile();
 
     service = module.get<ShiftsService>(ShiftsService);
-    repository = module.get(getRepositoryToken(Shift));
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+    shiftRepository = module.get(getRepositoryToken(Shift));
+    userRepository = module.get(getRepositoryToken(User));
   });
 
   it('should create a new shift', async () => {
     const createShiftDto = { user_id: 1 };
-    const mockShift = {
-      id: 1,
-      startTime: new Date(),
-      user: { id: 1 },
-      type: 'regular',
-    };
+    const mockShift = { id: 1, startTime: new Date(), user: { id: 1 }, type: 'regular' };
 
-    repository.findOne.mockResolvedValue(null);
-    repository.create.mockReturnValue(mockShift); 
-    repository.save.mockResolvedValue(mockShift);
+    userRepository.findOne.mockResolvedValue({ id: 1 });
+    shiftRepository.findOne.mockResolvedValue(null);
+    shiftRepository.create.mockReturnValue(mockShift);
+    shiftRepository.save.mockResolvedValue(mockShift);
 
     const result = await service.create(createShiftDto);
 
-    expect(repository.save).toHaveBeenCalledWith(mockShift);
+    expect(shiftRepository.save).toHaveBeenCalledWith(mockShift);
     expect(result).toEqual(mockShift);
   });
 
   it('should throw error if user already has an ongoing shift', async () => {
     const createShiftDto = { user_id: 1 };
-    const mockOngoingShift = { id: 1, user: { id: 1 }, endTime: null };
+    const mockUser = { id: 1 };
+    const mockOngoingShift = { id: 1, user: mockUser, endTime: null };
 
-    repository.findOne.mockResolvedValue(mockOngoingShift);
+    userRepository.findOne.mockResolvedValue(mockUser);
+    shiftRepository.findOne.mockResolvedValue(mockOngoingShift);
 
     try {
       await service.create(createShiftDto);
@@ -68,3 +75,4 @@ describe('ShiftsService', () => {
     }
   });
 });
+
