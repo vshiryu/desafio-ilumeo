@@ -18,7 +18,7 @@
 
    - **Backend**: arquivo `.env` em `./backend`:
      ```
-     DB_HOST=localhost
+     DB_HOST=db
      DB_PORT=5432
      DB_USER=user
      DB_PASSWORD=password
@@ -27,7 +27,7 @@
 
    - **Frontend**: arquivo `.env` em `./frontend`:
      ```
-     NEXT_PUBLIC_API_HOST='localhost:3001'
+     NEXT_PUBLIC_API_HOST=http://backend:3001
      ```
 
 3. Suba os serviços usando o comando:
@@ -44,7 +44,7 @@
 
 Para rodar os testes no backend dentro do container, utilize o comando:
    ```bash
-   docker exec -it backend npm run test
+   docker exec -it desafio-ilumeo-backend-1 npm run test
    ```
 
 
