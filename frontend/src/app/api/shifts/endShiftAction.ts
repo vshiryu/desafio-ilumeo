@@ -1,3 +1,4 @@
+"use server"
 import axios from "axios";
 
 export const endShiftAction = async (userId: number) => {
