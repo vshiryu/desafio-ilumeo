@@ -40,12 +40,13 @@
    - **Backend**: [http://localhost:3001](http://localhost:3001)
    - **Documentação da API**: [http://localhost:3001/api/docs](http://localhost:3001/api/docs)
 
-
 ## Rodando os Testes
 
-Para rodar os testes no backend, utilize o comando:
+Para rodar os testes no backend dentro do container, utilize o comando:
    ```bash
-   cd ./backend
-   npm run test
+   docker exec -it backend npm run test
    ```
+
+
+
 
